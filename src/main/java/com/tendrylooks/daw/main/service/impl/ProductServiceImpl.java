@@ -106,7 +106,8 @@ public class ProductServiceImpl implements ProductService {
                 product.getCodProd(),
                 product.getNomProd(),
                 product.getPreProd(),
-                product.getStockProd()
+                product.getStockProd(),
+                product.getEstProd()
         );
     }
 }

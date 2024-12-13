@@ -1,4 +1,4 @@
 package com.tendrylooks.daw.main.dto;
 
-public record ProductDto(Integer codProd, String nomProd, Double preProd, Integer stockProd) {
+public record ProductDto(Integer codProd, String nomProd, Double preProd, Integer stockProd, Boolean estProd) {
 }
