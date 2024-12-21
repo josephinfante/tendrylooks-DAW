@@ -17,7 +17,7 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer codCarr;
     //private Integer codUsu;
-    private String estCarr;
+    private Integer estCarr;
     private Date fecCarr;
 
     @ManyToOne
