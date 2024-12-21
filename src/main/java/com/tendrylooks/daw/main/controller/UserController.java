@@ -3,15 +3,18 @@ package com.tendrylooks.daw.main.controller;
 import com.tendrylooks.daw.main.dto.*;
 import com.tendrylooks.daw.main.entity.User;
 import com.tendrylooks.daw.main.service.UserService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 import java.util.UUID;
 
-@Controller
+@RestController
 @RequestMapping("/api/user")
 public class UserController {
 
@@ -26,6 +29,42 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.status(500).body(new ApiResponseDto("Error creating user: " + e.getMessage()));
         }
+    }
+
+    @PutMapping
+    public ResponseEntity<ApiResponseDto> updateUser(@RequestBody UserDetailDto userDetailDto) {
+        try {
+            userService.updateUser(userDetailDto);
+            return ResponseEntity.ok(new ApiResponseDto("User updated successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new ApiResponseDto("Error updating user: " + e.getMessage()));
+        }
+    }
+
+    @GetMapping("/{codUsu}")
+    public ResponseEntity findById(@PathVariable Integer codUsu) {
+        try {
+            UserDetailDto userDetail = userService.findById(codUsu);
+            return ResponseEntity.ok(userDetail);
+        } catch (EntityNotFoundException ex) {
+            return ResponseEntity.status(404).body(new ApiResponseDto(ex.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new ApiResponseDto("Error getting the user: " + e.getMessage()));
+        }
+    }
+
+    @GetMapping
+    public GetAllResponseDto<UserDto> getAllUsers(@RequestParam(defaultValue = "1") int page,
+                                                        @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<UserDto> userPage = userService.getAllUsers(pageable);
+        return new GetAllResponseDto<>(
+                userPage.getContent(),
+                userPage.getSize(),
+                userPage.getNumber() + 1,
+                userPage.getTotalElements(),
+                userPage.getTotalPages()
+        );
     }
 
     @PostMapping("/login")
@@ -47,7 +86,8 @@ public class UserController {
                                 usuario.getCodUsu(),
                                 usuario.getNomUsu(),
                                 usuario.getApeUsu(),
-                                usuario.getCorreoUsu()
+                                usuario.getCorreoUsu(),
+                                usuario.getEstUsu()
                         )));
             }
             return ResponseEntity.status(403).body(new LoginResponseDto("Invalid credentials. Please try again", null));
