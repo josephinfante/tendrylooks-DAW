@@ -38,8 +38,8 @@ CREATE PROCEDURE sp_CreateProduct(
     IN imgProd VARCHAR(255)
 )
 BEGIN
-    INSERT INTO Producto (nomProd, descProd, codCat, preProd, stockProd, imgProd)
-    VALUES (nomProd, descProd, codCat, preProd, stockProd, imgProd);
+    INSERT INTO Producto (nomProd, descProd, codCat, preProd, stockProd, imgProd, estProd, fecProd)
+    VALUES (nomProd, descProd, codCat, preProd, stockProd, imgProd, 1, NOW());
 END;
 
 -- Update Product
