@@ -5,7 +5,7 @@ import java.util.Date;
 public record ProductDetailDto(Integer codProd,
                                String nomProd,
                                String descProd,
-                               Integer codCat,
+                               String nomCat,
                                Double preProd,
                                Integer stockProd,
                                String imgProd,

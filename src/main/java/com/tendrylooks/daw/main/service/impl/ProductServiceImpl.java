@@ -3,6 +3,7 @@ package com.tendrylooks.daw.main.service.impl;
 import com.tendrylooks.daw.main.dto.ProductCreateDto;
 import com.tendrylooks.daw.main.dto.ProductDetailDto;
 import com.tendrylooks.daw.main.dto.ProductDto;
+import com.tendrylooks.daw.main.dto.ProductListingDto;
 import com.tendrylooks.daw.main.entity.Product;
 import com.tendrylooks.daw.main.repository.ProductRepository;
 import com.tendrylooks.daw.main.service.ProductService;
@@ -78,7 +79,7 @@ public class ProductServiceImpl implements ProductService {
                 product.getCodProd(),
                 product.getNomProd(),
                 product.getDescProd(),
-                product.getCategory().getCodCat(),
+                product.getCategory().getNomCat(),
                 product.getPreProd(),
                 product.getStockProd(),
                 product.getImgProd(),
@@ -94,14 +95,39 @@ public class ProductServiceImpl implements ProductService {
 
         List<Product> products = productRepository.spGetAllProducts(limit, offset);
 
-        List<ProductDto> productDtos = products.stream().map(this::convertToDto).collect(Collectors.toList());
+        List<ProductDto> productDtos = products.stream().map(this::convertToProductDto).collect(Collectors.toList());
 
         long totalProducts = productRepository.count();
 
         return new PageImpl<>(productDtos, pageable, totalProducts);
     }
 
-    private ProductDto convertToDto(Product product) {
+    @Override
+    public Page<ProductListingDto> getProductListing(Pageable pageable) {
+        int limit = pageable.getPageSize();
+        int offset = (int) pageable.getOffset();
+
+        List<Product> products = productRepository.spGetAllProducts(limit, offset);
+
+        List<ProductListingDto> productListingDtos = products.stream().map(this::convertToProductListing).collect(Collectors.toList());
+
+        long totalProducts = productRepository.count();
+
+        return new PageImpl<>(productListingDtos, pageable, totalProducts);
+    }
+
+    private ProductListingDto convertToProductListing(Product product) {
+        return new ProductListingDto(
+                product.getCodProd(),
+                product.getNomProd(),
+                product.getPreProd(),
+                product.getStockProd(),
+                product.getImgProd(),
+                product.getEstProd()
+        );
+    }
+
+    private ProductDto convertToProductDto(Product product) {
         return new ProductDto(
                 product.getCodProd(),
                 product.getNomProd(),

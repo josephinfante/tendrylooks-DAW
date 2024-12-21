@@ -35,8 +35,17 @@ public class UserController {
         try {
             Optional<User> usuarioOpt = userService.verifyCredentials(loginDto);
             if (usuarioOpt.isPresent()) {
+                User usuario = usuarioOpt.get();
+                int roleInt = usuario.getRolUsu(); // '0' for user, '1' for admin
+
+                String role = (roleInt == 1) ? "admin" : "user";
+
                 String token = UUID.randomUUID().toString();
-                return ResponseEntity.ok().header("token", token).body(new ApiResponseDto("Login successful"));
+
+                return ResponseEntity.ok()
+                        .header("token", token)
+                        .header("role", role)  // Add the mapped user role (string) in the header
+                        .body(new ApiResponseDto("Login successful"));
             }
             return ResponseEntity.status(403).body(new ApiResponseDto("Invalid credentials. Please try again"));
         } catch (Exception e) {
