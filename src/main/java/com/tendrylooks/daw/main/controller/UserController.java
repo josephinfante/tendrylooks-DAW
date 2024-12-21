@@ -1,8 +1,6 @@
 package com.tendrylooks.daw.main.controller;
 
-import com.tendrylooks.daw.main.dto.ApiResponseDto;
-import com.tendrylooks.daw.main.dto.LoginDto;
-import com.tendrylooks.daw.main.dto.UserCreateDto;
+import com.tendrylooks.daw.main.dto.*;
 import com.tendrylooks.daw.main.entity.User;
 import com.tendrylooks.daw.main.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +29,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponseDto> login(@RequestBody LoginDto loginDto) {
+    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginDto loginDto) {
         try {
             Optional<User> usuarioOpt = userService.verifyCredentials(loginDto);
             if (usuarioOpt.isPresent()) {
@@ -45,11 +43,16 @@ public class UserController {
                 return ResponseEntity.ok()
                         .header("token", token)
                         .header("role", role)  // Add the mapped user role (string) in the header
-                        .body(new ApiResponseDto("Login successful"));
+                        .body(new LoginResponseDto("Login successful", new UserDto(
+                                usuario.getCodUsu(),
+                                usuario.getNomUsu(),
+                                usuario.getApeUsu(),
+                                usuario.getCorreoUsu()
+                        )));
             }
-            return ResponseEntity.status(403).body(new ApiResponseDto("Invalid credentials. Please try again"));
+            return ResponseEntity.status(403).body(new LoginResponseDto("Invalid credentials. Please try again", null));
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(new ApiResponseDto("Error loging user: " + e.getMessage()));
+            return ResponseEntity.status(500).body(new LoginResponseDto("Error loging user: " + e.getMessage(), null));
         }
     }
 }
