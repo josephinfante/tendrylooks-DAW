@@ -4,7 +4,9 @@ import com.tendrylooks.daw.main.dto.ProductCreateDto;
 import com.tendrylooks.daw.main.dto.ProductDetailDto;
 import com.tendrylooks.daw.main.dto.ProductDto;
 import com.tendrylooks.daw.main.dto.ProductListingDto;
+import com.tendrylooks.daw.main.entity.Category;
 import com.tendrylooks.daw.main.entity.Product;
+import com.tendrylooks.daw.main.repository.CategoryRepository;
 import com.tendrylooks.daw.main.repository.ProductRepository;
 import com.tendrylooks.daw.main.service.ProductService;
 import jakarta.persistence.EntityNotFoundException;
@@ -22,6 +24,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     @Override
     public void createProduct(ProductCreateDto productCreateDto) {
@@ -46,11 +51,11 @@ public class ProductServiceImpl implements ProductService {
         if (productDetailDto.descProd() != null) {
             existingProduct.setDescProd(productDetailDto.descProd());
         }
-//        if (productDetailDto.codCat() != null) {
-//            Category category = categoryRepository.findById(productDetailDto.codCat())
-//                    .orElseThrow(() -> new EntityNotFoundException("Category not found for ID: " + productDetailDto.codCat()));
-//            existingProduct.setCategory(category); // Set the category object
-//        }
+        if (productDetailDto.codCat() != null) {
+            Category category = categoryRepository.findById(productDetailDto.codCat())
+                    .orElseThrow(() -> new EntityNotFoundException("Category not found for ID: " + productDetailDto.codCat()));
+            existingProduct.setCategory(category); // Set the category object
+        }
         if (productDetailDto.preProd() != null) {
             existingProduct.setPreProd(productDetailDto.preProd());
         }
@@ -79,6 +84,7 @@ public class ProductServiceImpl implements ProductService {
                 product.getCodProd(),
                 product.getNomProd(),
                 product.getDescProd(),
+                product.getCategory().getCodCat(),
                 product.getCategory().getNomCat(),
                 product.getPreProd(),
                 product.getStockProd(),
