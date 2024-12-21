@@ -18,7 +18,7 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer codCat;
     private String nomCat;
-    private String estCat;
+    private Boolean estCat;
     private Date fecCat;
 
     @OneToMany(mappedBy = "category")
